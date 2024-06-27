@@ -121,6 +121,12 @@ def cut_audio_segments(rate, data, final_result):
         print(f"Exported {file_name}")
 
 
+def datetime_converter(o):
+    if isinstance(o, datetime):
+        return o.isoformat()
+    return o
+
+
 def process_recording_metadata(metadata_file_path):
     with open(metadata_file_path, 'r') as file:
         metadata = json.load(file)
@@ -143,7 +149,7 @@ def process_recording_metadata(metadata_file_path):
     file_name = f"{PROCESSED_MEDIA_DIR}/{thread_id}/{ws_conn_sid}/{thread_id[0:8]}_{ws_conn_sid}_processed.json"
     os.makedirs(os.path.dirname(file_name), exist_ok=True)
     with open(file_name, 'w') as file:
-        json.dump(final_result, file, indent=2)
+        json.dump(final_result, file, indent=2, default=datetime_converter)
     return final_result
 
 
