@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import librosa
 import soundfile as sf
 import os
+from MessageUpdateHandler import MessageUpdateHandler
 
 PROCESSED_MEDIA_DIR = "./processed_media"
 
@@ -106,18 +107,21 @@ def write_audio_file(file_path, data, rate):
 def cut_audio_segments(rate, data, final_result):
     thread_id = final_result.pop('thread_id')
     ws_conn_sid = final_result.pop('ws_conn_sid')
+    message_update_handler = MessageUpdateHandler()
     for msg_id, info in final_result.items():
         start_sample = int(info['relative_start'] * rate)
         end_sample = int(info['relative_end'] * rate)
         segment_data = data[start_sample:end_sample]
 
         # replace # in msg_id with _ to avoid path issues
-        msg_id = msg_id.replace("#", "_")
+        msg_id_for_file = msg_id.replace("#", "_")
         # save file to ./processed_media/{thread_id}/{ws_conn_sid}/{msg_id}.mp3
-        file_name = f"{PROCESSED_MEDIA_DIR}/{thread_id}/{ws_conn_sid}/{msg_id}.mp3"
+        file_name = f"{PROCESSED_MEDIA_DIR}/{thread_id}/{ws_conn_sid}/{msg_id_for_file}.mp3"
         # create directories if they don't exist
         os.makedirs(os.path.dirname(file_name), exist_ok=True)
         write_audio_file(file_name, segment_data, rate)
+        # update the message in DynamoDB to set has_audio to True
+        message_update_handler.update_message_audio_flag(thread_id, msg_id[-13:])
         print(f"Exported {file_name}")
 
 

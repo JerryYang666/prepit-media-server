@@ -10,6 +10,7 @@ import pika
 import json
 import time
 from audio_processing import process_recording_metadata, process_audio_file
+from dotenv import load_dotenv
 
 UNPROCESSED_MEDIA_DIR = "./unprocessed_media"
 
@@ -36,6 +37,7 @@ def callback(ch, method, properties, body):
 
 if __name__ == "__main__":
     time.sleep(15)
+    load_dotenv(dotenv_path="/run/secrets/prepit-secret")
     while True:
         try:
             connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
