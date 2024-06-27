@@ -4,6 +4,7 @@ import librosa
 import soundfile as sf
 import os
 from MessageUpdateHandler import MessageUpdateHandler
+from FileUploadHandler import FileUploadHandler
 
 PROCESSED_MEDIA_DIR = "./processed_media"
 
@@ -108,6 +109,7 @@ def cut_audio_segments(rate, data, final_result):
     thread_id = final_result.pop('thread_id')
     ws_conn_sid = final_result.pop('ws_conn_sid')
     message_update_handler = MessageUpdateHandler()
+    file_upload_handler = FileUploadHandler()
     for msg_id, info in final_result.items():
         start_sample = int(info['relative_start'] * rate)
         end_sample = int(info['relative_end'] * rate)
@@ -122,6 +124,8 @@ def cut_audio_segments(rate, data, final_result):
         write_audio_file(file_name, segment_data, rate)
         # update the message in DynamoDB to set has_audio to True
         message_update_handler.update_message_audio_flag(thread_id, msg_id[-13:])
+        # upload the file to S3
+        file_upload_handler.upload_file(file_name, f"{thread_id}/", is_public=True)
         print(f"Exported {file_name}")
 
 
@@ -154,6 +158,8 @@ def process_recording_metadata(metadata_file_path):
     os.makedirs(os.path.dirname(file_name), exist_ok=True)
     with open(file_name, 'w') as file:
         json.dump(final_result, file, indent=2, default=datetime_converter)
+    file_upload_handler = FileUploadHandler()
+    file_upload_handler.upload_file(file_name, f"{thread_id}/")
     return final_result
 
 
