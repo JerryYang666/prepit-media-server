@@ -10,6 +10,8 @@ from fastapi import FastAPI, File, UploadFile, Form, HTTPException
 import pika
 import json
 import os
+import time
+import hashlib
 
 import logging
 
@@ -43,13 +45,26 @@ async def send_to_queue(file_name, metadata_name):
 UNPROCESSED_MEDIA_DIR = "./unprocessed_media"
 
 
+async def generate_dynamic_auth_code():
+    step = 30  # dynamic auth token 30 seconds window
+    salt = "prepit_jerry_salt"  # Salt for the dynamic auth token
+    time_step = int(time.time() // step)
+    time_based_key = str(time_step) + salt  # Combine time step with salt
+    return hashlib.sha256(time_based_key.encode()).hexdigest()
+
+
 @app.post("/new_audio_processing_task")
 async def root(
         metadata_file: UploadFile = File(...),
         wav_file: UploadFile = File(...),
         thread_id: str = Form(...),
-        ws_sid: str = Form(...)
+        ws_sid: str = Form(...),
+        dynamic_auth_token: str = Form(...)
 ):
+    # Validate the dynamic auth token
+    expected_dynamic_auth_token = await generate_dynamic_auth_code()
+    if dynamic_auth_token != expected_dynamic_auth_token:
+        return HTTPException(status_code=401, detail="Access Denied")
     try:
         # Save metadata file
         metadata_path = os.path.join(UNPROCESSED_MEDIA_DIR, metadata_file.filename)
