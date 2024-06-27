@@ -11,13 +11,15 @@ import json
 import time
 from audio_processing import process_recording_metadata, process_audio_file
 
+UNPROCESSED_MEDIA_DIR = "./unprocessed_media"
+
 
 def process_audio(wav_path, metadata_path):
-    # Simulating audio processing
+    wav_path = f"{UNPROCESSED_MEDIA_DIR}/{wav_path}"
+    metadata_path = f"{UNPROCESSED_MEDIA_DIR}/{metadata_path}"
     print(f"Processing {wav_path} with metadata {metadata_path}")
-    # processed_metadata = process_recording_metadata(metadata_path)
-    # process_audio_file(wav_path, processed_metadata)
-    time.sleep(20)
+    processed_metadata = process_recording_metadata(metadata_path)
+    process_audio_file(wav_path, processed_metadata)
     print(f"Finished processing {wav_path}")
 
 

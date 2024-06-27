@@ -2,6 +2,9 @@ import json
 from datetime import datetime, timedelta
 import librosa
 import soundfile as sf
+import os
+
+PROCESSED_MEDIA_DIR = "./processed_media"
 
 
 def clean_audio_timestamps(audio_timestamps):
@@ -101,12 +104,17 @@ def write_audio_file(file_path, data, rate):
 
 
 def cut_audio_segments(rate, data, final_result):
+    thread_id = final_result['thread_id']
+    ws_conn_sid = final_result['ws_conn_sid']
     for msg_id, info in final_result.items():
         start_sample = int(info['relative_start'] * rate)
         end_sample = int(info['relative_end'] * rate)
         segment_data = data[start_sample:end_sample]
 
-        file_name = f"./volume_cache/{msg_id.replace('#', '_')}.mp3"
+        # save file to ./processed_media/{thread_id}/{ws_conn_sid}/{msg_id}.mp3
+        file_name = f"{PROCESSED_MEDIA_DIR}/{thread_id}/{ws_conn_sid}/{msg_id}.mp3"
+        # create directories if they don't exist
+        os.makedirs(os.path.dirname(file_name), exist_ok=True)
         write_audio_file(file_name, segment_data, rate)
         print(f"Exported {file_name}")
 
@@ -119,11 +127,15 @@ def process_recording_metadata(metadata_file_path):
     audio_started_at = metadata['audio_started_at']
     audio_pause_timestamps = metadata['audio_pause_timestamps']
     user_msg_timestamps = metadata['user_msg_timestamps']
+    thread_id = metadata['thread_id']
+    ws_conn_sid = metadata['ws_conn_sid']
 
     cleaned_timestamps = clean_audio_timestamps(audio_timestamps)
     absolute_timestamps = map_to_absolute_timestamps(cleaned_timestamps, audio_started_at, audio_pause_timestamps)
     organized_transcriptions = organize_transcriptions_by_message(absolute_timestamps, user_msg_timestamps)
     final_result = process_for_audio(organized_transcriptions)
+    final_result['thread_id'] = thread_id
+    final_result['ws_conn_sid'] = ws_conn_sid
     return final_result
 
 
