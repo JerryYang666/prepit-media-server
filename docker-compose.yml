@@ -4,7 +4,6 @@ version: "1.0.1"
 
 services:
   prepit-media-pro-prod:
-    container_name: prepit-media-pro-prod
     image: ghcr.io/jerryyang666/prepit-media-pro:prod
     volumes:
       - ./prepit_media_unprocessed:/app/unprocessed_media:rw
