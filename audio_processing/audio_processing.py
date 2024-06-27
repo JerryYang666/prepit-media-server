@@ -130,10 +130,3 @@ def process_recording_metadata(metadata_file_path):
 def process_audio_file(wav_file_path, final_result):
     rate, data = load_wav_file(wav_file_path)
     cut_audio_segments(rate, data, final_result)
-
-
-# Example usage
-wav_file_path = "650762d0_5FPsBGL2JS_pV2XqAAAD.wav"
-metadata_file_path = "650762d0_5FPsBGL2JS_pV2XqAAAD.json"
-processed_metadata = process_recording_metadata(metadata_file_path)
-process_audio_file(wav_file_path, processed_metadata)

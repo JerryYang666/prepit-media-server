@@ -51,8 +51,5 @@ USER appuser
 # Copy the source code into the container.
 COPY . .
 
-# Expose the port that the application listens on.
-EXPOSE 8000
-
 # Run the application.
-CMD python main.py
+CMD python start.py

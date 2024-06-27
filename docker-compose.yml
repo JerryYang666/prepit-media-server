@@ -1,0 +1,36 @@
+# This is the docker-compose file for in cloud development and production
+
+version: "1.0.0"
+
+services:
+  prepit-media-server:
+    build:
+      context: ./audio_processing
+    volumes:
+      - ./prepit_media_volume:/app/volume_cache:rw
+    depends_on:
+      - rabbitmq
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_QUEUE=audio_processing
+    deploy:
+      replicas: 3  # Number of instances to run
+  prepit-media-api:
+    build:
+      context: ./media_api
+    volumes:
+      - ./prepit_media_volume:/app/volume_cache:rw
+    depends_on:
+      - rabbitmq
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_QUEUE=audio_processing
+    ports:
+      - 8000:5002
+  rabbitmq:
+    image: rabbitmq:3.13.3-management
+    ports:
+      - 15672:15672
+    volumes:
+      - ./rabbitmq_data:/var/lib/rabbitmq
+
