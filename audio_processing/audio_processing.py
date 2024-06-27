@@ -104,13 +104,15 @@ def write_audio_file(file_path, data, rate):
 
 
 def cut_audio_segments(rate, data, final_result):
-    thread_id = final_result['thread_id']
-    ws_conn_sid = final_result['ws_conn_sid']
+    thread_id = final_result.pop('thread_id')
+    ws_conn_sid = final_result.pop('ws_conn_sid')
     for msg_id, info in final_result.items():
         start_sample = int(info['relative_start'] * rate)
         end_sample = int(info['relative_end'] * rate)
         segment_data = data[start_sample:end_sample]
 
+        # replace # in msg_id with _ to avoid path issues
+        msg_id = msg_id.replace("#", "_")
         # save file to ./processed_media/{thread_id}/{ws_conn_sid}/{msg_id}.mp3
         file_name = f"{PROCESSED_MEDIA_DIR}/{thread_id}/{ws_conn_sid}/{msg_id}.mp3"
         # create directories if they don't exist
@@ -136,6 +138,12 @@ def process_recording_metadata(metadata_file_path):
     final_result = process_for_audio(organized_transcriptions)
     final_result['thread_id'] = thread_id
     final_result['ws_conn_sid'] = ws_conn_sid
+
+    # save final_result to json file in ./processed_media/{thread_id}/{ws_conn_sid}/thread_id[0:8]_ws_conn_sid_processed.json
+    file_name = f"{PROCESSED_MEDIA_DIR}/{thread_id}/{ws_conn_sid}/{thread_id[0:8]}_{ws_conn_sid}_processed.json"
+    os.makedirs(os.path.dirname(file_name), exist_ok=True)
+    with open(file_name, 'w') as file:
+        json.dump(final_result, file, indent=2)
     return final_result
 
 

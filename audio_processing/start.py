@@ -18,8 +18,11 @@ def process_audio(wav_name, metadata_name):
     wav_path = f"{UNPROCESSED_MEDIA_DIR}/{wav_name}"
     metadata_path = f"{UNPROCESSED_MEDIA_DIR}/{metadata_name}"
     print(f"Processing {wav_path} with metadata {metadata_path}")
-    processed_metadata = process_recording_metadata(metadata_path)
-    process_audio_file(wav_path, processed_metadata)
+    try:
+        processed_metadata = process_recording_metadata(metadata_path)
+        process_audio_file(wav_path, processed_metadata)
+    except Exception as e:
+        print(f"Error processing {wav_path}: {e}")
     print(f"Finished processing {wav_path}")
 
 
