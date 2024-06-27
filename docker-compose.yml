@@ -1,36 +1,40 @@
 # This is the docker-compose file for in cloud development and production
 
-version: "1.0.0"
+version: "1.0.1"
 
 services:
-  prepit-media-server:
-    build:
-      context: ./audio_processing
+  prepit-media-pro-prod:
+    container_name: prepit-media-pro-prod
+    image: ghcr.io/jerryyang666/prepit-media-pro:prod
     volumes:
-      - ./prepit_media_volume:/app/volume_cache:rw
+      - ./prepit_media_unprocessed:/app/unprocessed_media:rw
+      - ./prepit_media_processed:/app/processed_media:rw
     depends_on:
       - rabbitmq
     environment:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_QUEUE=audio_processing
+    secrets:
+      - prepit-secret
     deploy:
       replicas: 3  # Number of instances to run
-  prepit-media-api:
-    build:
-      context: ./media_api
+  prepit-media-api-prod:
+    container_name: prepit-media-api-prod
+    image: ghcr.io/jerryyang666/prepit-media-api:prod
     volumes:
-      - ./prepit_media_volume:/app/volume_cache:rw
+      - ./prepit_media_unprocessed:/app/unprocessed_media:rw
     depends_on:
       - rabbitmq
     environment:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_QUEUE=audio_processing
     ports:
-      - 8000:5002
+      - 6050:5002
   rabbitmq:
-    image: rabbitmq:3.13.3-management
-    ports:
-      - 15672:15672
+    image: rabbitmq:3.13.3
     volumes:
-      - ./rabbitmq_data:/var/lib/rabbitmq
+      - ./rabbitmq_data:/var/lib/rabbitmq:rw
 
+secrets:
+  prepit-secret:
+    file: edcwsxqaz

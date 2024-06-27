@@ -86,3 +86,8 @@ async def root(
     except Exception as e:
         logging.error(f"Error processing audio: {e}")
         return HTTPException(status_code=500, detail="Error processing audio")
+
+
+@app.get("/tttt")
+async def root():
+    return {"message": "Hello World"}
