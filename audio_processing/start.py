@@ -18,11 +18,8 @@ def process_audio(wav_name, metadata_name):
     wav_path = f"{UNPROCESSED_MEDIA_DIR}/{wav_name}"
     metadata_path = f"{UNPROCESSED_MEDIA_DIR}/{metadata_name}"
     print(f"Processing {wav_path} with metadata {metadata_path}")
-    try:
-        processed_metadata = process_recording_metadata(metadata_path)
-        process_audio_file(wav_path, processed_metadata)
-    except Exception as e:
-        print(f"Error processing {wav_path}: {e}")
+    processed_metadata = process_recording_metadata(metadata_path)
+    process_audio_file(wav_path, processed_metadata)
     print(f"Finished processing {wav_path}")
 
 
@@ -30,8 +27,11 @@ def callback(ch, method, properties, body):
     message = json.loads(body)
     file_name = message['file_name']
     metadata_name = message['metadata_name']
-    process_audio(file_name, metadata_name)
-    ch.basic_ack(delivery_tag=method.delivery_tag)
+    try:
+        process_audio(file_name, metadata_name)
+        ch.basic_ack(delivery_tag=method.delivery_tag)
+    except Exception as e:
+        print(f"Error processing {file_name}: {e}")
 
 
 if __name__ == "__main__":
