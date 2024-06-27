@@ -14,9 +14,9 @@ from audio_processing import process_recording_metadata, process_audio_file
 UNPROCESSED_MEDIA_DIR = "./unprocessed_media"
 
 
-def process_audio(wav_path, metadata_path):
-    wav_path = f"{UNPROCESSED_MEDIA_DIR}/{wav_path}"
-    metadata_path = f"{UNPROCESSED_MEDIA_DIR}/{metadata_path}"
+def process_audio(wav_name, metadata_name):
+    wav_path = f"{UNPROCESSED_MEDIA_DIR}/{wav_name}"
+    metadata_path = f"{UNPROCESSED_MEDIA_DIR}/{metadata_name}"
     print(f"Processing {wav_path} with metadata {metadata_path}")
     processed_metadata = process_recording_metadata(metadata_path)
     process_audio_file(wav_path, processed_metadata)
@@ -25,9 +25,9 @@ def process_audio(wav_path, metadata_path):
 
 def callback(ch, method, properties, body):
     message = json.loads(body)
-    file_path = message['file_path']
-    metadata_path = message['metadata_path']
-    process_audio(file_path, metadata_path)
+    file_name = message['file_name']
+    metadata_name = message['metadata_name']
+    process_audio(file_name, metadata_name)
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
