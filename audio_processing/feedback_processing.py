@@ -35,13 +35,13 @@ Format your feedback into two parts:
 ## Suggestions for improvement
 """
 FEEDBACK_USER_PROMPT_TEMPLATE = """
-Here is the case background: {case_background}
-You are writing feedback for this part of the interview: {feedback_step_name}
-This step was conducted based on the following instructions: {feedback_step_instructions}
-And this is the information (might also include best responses) that the was provided to the interviewer by the case book: {feedback_step_info}
-Here is the interview transcript between the interviewer and the candidate:
+# Here is the case background: {case_background}
+# You are writing feedback for this part of the interview: {feedback_step_name}
+# This step was conducted based on the following instructions: {feedback_step_instructions}
+# And this is the information (might also include best responses) that the was provided to the interviewer by the case book: {feedback_step_info}
+# Here is the interview transcript between the interviewer and the candidate:
 {feedback_step_transcript}
-Please write feedback for the candidate based on the information above. You should directly start the feedback and should not include any extra sentence at the start or the end of your response.
+# Please write feedback for the candidate based on the information above. You should directly start the feedback and should not include any extra sentence at the start or the end of your response.
 """
 FEEDBACK_AI_PROVIDER = "openai"
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
