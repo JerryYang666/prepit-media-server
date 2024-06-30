@@ -12,7 +12,7 @@ services:
       - rabbitmq
     environment:
       - RABBITMQ_HOST=rabbitmq
-      - RABBITMQ_QUEUE=audio_processing
+      - RABBITMQ_QUEUE=prepit_processing
     secrets:
       - prepit-secret
     deploy:
@@ -26,7 +26,7 @@ services:
       - rabbitmq
     environment:
       - RABBITMQ_HOST=rabbitmq
-      - RABBITMQ_QUEUE=audio_processing
+      - RABBITMQ_QUEUE=prepit_processing
     ports:
       - 6050:5002
   rabbitmq:
