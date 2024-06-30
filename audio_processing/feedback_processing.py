@@ -148,11 +148,13 @@ def get_feedback(messages_file_path: str, thread_id: str, agent_id: str, step_id
         feedback = anthropic_generate_feedback(feedback_prompts, formatted_messages)
     else:
         raise ValueError(f"Unknown feedback AI provider: {FEEDBACK_AI_PROVIDER}")
-    feedback_storage_handler.put_feedback(thread_id, agent_id, step_id, feedback)
+    feedback_storage_handler.put_feedback(thread_id, agent_id, step_id, feedback_prompts['feedback_step_name'],
+                                          feedback)
     feedback_dict = {
         "thread_id": thread_id,
         "agent_id": agent_id,
         "step_id": step_id,
+        "step_title": feedback_prompts['feedback_step_name'],
         "feedback": feedback
     }
     # Save the feedback to the processed media directory

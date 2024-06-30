@@ -22,12 +22,13 @@ class FeedbackStorageHandler:
                                        aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY_DYNAMODB"))
         self.table = self.dynamodb.Table(self.DYNAMODB_TABLE_NAME)
 
-    def put_feedback(self, thread_id: str, agent_id: str, step_id: int, feedback: str) -> bool:
+    def put_feedback(self, thread_id: str, agent_id: str, step_id: int, step_title: str, feedback: str) -> bool:
         """
         Put the feedback into the database.
         :param thread_id: The ID of the thread.
         :param agent_id: The ID of the agent.
         :param step_id: The ID of the step.
+        :param step_title: The title of the step.
         :param feedback: The feedback.
         :return: True if successful, False otherwise.
         """
@@ -36,6 +37,7 @@ class FeedbackStorageHandler:
                 Item={
                     'thread_id': thread_id,
                     'step_id': step_id,
+                    'step_title': step_title,
                     'agent_id': agent_id,
                     'feedback': feedback
                 }
