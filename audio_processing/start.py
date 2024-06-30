@@ -14,6 +14,8 @@ from audio_processing import process_recording_metadata, process_audio_file
 from feedback_processing import get_feedback
 from dotenv import load_dotenv
 
+load_dotenv(dotenv_path="/run/secrets/prepit-secret")
+
 UNPROCESSED_MEDIA_DIR = "./unprocessed_media"
 RABBITMQ_HOST = os.getenv("RABBITMQ_HOST", "rabbitmq")
 RABBITMQ_QUEUE = os.getenv("RABBITMQ_QUEUE", "prepit_processing")
@@ -68,7 +70,6 @@ if __name__ == "__main__":
     # wait for RabbitMQ to start
     print("Waiting for RabbitMQ to start")
     time.sleep(15)
-    load_dotenv(dotenv_path="/run/secrets/prepit-secret")
     print("Trying to connect to RabbitMQ")
     while True:
         try:
