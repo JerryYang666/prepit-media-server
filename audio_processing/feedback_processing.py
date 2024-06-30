@@ -28,7 +28,7 @@ Your feedback should be structured, and can include the following aspects (you c
 6. if the candidate's response was creative (especially for brainstorming questions)
 7. if the candidate's final recommendation was good
 Your feedback should be constructive and provide actionable advice for the candidate to improve.
-Your feedback should be around 200 words.
+Your feedback should be around 100 words. It should be concise and to the point.
 Your feedback should NOT consider spelling or grammar mistakes, as the candidate's response was verbal and the text here is transcribed from the audio.
 Format your feedback into two parts:
 ## Comments on the candidate's performance
