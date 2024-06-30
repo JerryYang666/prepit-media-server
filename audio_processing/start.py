@@ -12,9 +12,6 @@ import time
 import os
 from audio_processing import process_recording_metadata, process_audio_file
 from feedback_processing import get_feedback
-from dotenv import load_dotenv
-
-load_dotenv(dotenv_path="/run/secrets/prepit-secret")
 
 UNPROCESSED_MEDIA_DIR = "./unprocessed_media"
 RABBITMQ_HOST = os.getenv("RABBITMQ_HOST", "rabbitmq")

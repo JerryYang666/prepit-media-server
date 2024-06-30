@@ -12,6 +12,9 @@ from AgentPromptHandler import AgentPromptHandler
 from FeedbackStorageHandler import FeedbackStorageHandler
 from openai import OpenAI
 from anthropic import Anthropic
+from dotenv import load_dotenv
+
+load_dotenv(dotenv_path="/run/secrets/prepit-secret")
 
 PROCESSED_MEDIA_DIR = "./processed_media"
 FEEDBACK_SYSTEM_PROMPT_TEMPLATE = """
