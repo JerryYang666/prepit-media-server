@@ -20,6 +20,9 @@ def process_audio(wav_name, metadata_name):
     metadata_path = f"{UNPROCESSED_MEDIA_DIR}/{metadata_name}"
     print(f"Processing {wav_path} with metadata {metadata_path}")
     processed_metadata = process_recording_metadata(metadata_path)
+    if processed_metadata is False:
+        print(f"Skipping processing {wav_path}")
+        return
     process_audio_file(wav_path, processed_metadata)
     print(f"Finished processing {wav_path}")
 

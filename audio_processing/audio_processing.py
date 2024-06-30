@@ -135,7 +135,7 @@ def datetime_converter(o):
     return o
 
 
-def process_recording_metadata(metadata_file_path):
+def process_recording_metadata(metadata_file_path) -> dict | bool:
     with open(metadata_file_path, 'r') as file:
         metadata = json.load(file)
 
@@ -145,6 +145,11 @@ def process_recording_metadata(metadata_file_path):
     user_msg_timestamps = metadata['user_msg_timestamps']
     thread_id = metadata['thread_id']
     ws_conn_sid = metadata['ws_conn_sid']
+
+    if not user_msg_timestamps:
+        print(
+            f"No user messages found in metadata, skipping processing, thread_id: {thread_id}, ws_conn_sid: {ws_conn_sid}")
+        return False
 
     cleaned_timestamps = clean_audio_timestamps(audio_timestamps)
     absolute_timestamps = map_to_absolute_timestamps(cleaned_timestamps, audio_started_at, audio_pause_timestamps)
