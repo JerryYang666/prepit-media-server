@@ -47,7 +47,7 @@ async def send_audio_to_queue(file_name, metadata_name):
     connection.close()
 
 
-async def send_feedback_to_queue(messages_filename):
+async def send_feedback_to_queue(messages_filename, thread_id, agent_id, step_id):
     connection = pika.BlockingConnection(pika.ConnectionParameters(RABBITMQ_HOST))
     channel = connection.channel()
 
@@ -55,7 +55,10 @@ async def send_feedback_to_queue(messages_filename):
 
     message = json.dumps({
         'task_type': 'feedback_processing',  # 'audio_processing' or 'feedback_processing
-        'messages_filename': messages_filename
+        'messages_filename': messages_filename,
+        'thread_id': thread_id,
+        'agent_id': agent_id,
+        'step_id': step_id
     })
     channel.basic_publish(exchange='',
                           routing_key=RABBITMQ_QUEUE,
@@ -127,7 +130,7 @@ async def feedback_processing_task(
         with open(metadata_path, "wb") as f:
             f.write(await messages_file.read())
 
-        await send_feedback_to_queue(messages_file.filename)
+        await send_feedback_to_queue(messages_file.filename, thread_id, agent_id, step_id)
 
         return {"message": f"Feedback processing queued for {messages_file.filename}",
                 "messages_filename": messages_file.filename,
