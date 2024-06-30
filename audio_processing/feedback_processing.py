@@ -30,6 +30,9 @@ Your feedback should be structured, and can include the following aspects (you c
 Your feedback should be constructive and provide actionable advice for the candidate to improve.
 Your feedback should be around 200 words.
 Your feedback should NOT consider spelling or grammar mistakes, as the candidate's response was verbal and the text here is transcribed from the audio.
+Format your feedback into two parts:
+## Comments on the candidate's performance
+## Suggestions for improvement
 """
 FEEDBACK_USER_PROMPT_TEMPLATE = """
 Here is the case background: {case_background}
@@ -103,8 +106,8 @@ def openai_generate_feedback(template_contents: dict, formatted_messages: str) -
         messages=openai_messages
     )
     print("openai messages: ", openai_messages)
-    print("openai feedback: ", completion.choices[0].message)
-    return str(completion.choices[0].message)
+    print("openai feedback: ", completion.choices[0].message.content)
+    return str(completion.choices[0].message.content)
 
 
 def anthropic_generate_feedback(template_contents: dict, formatted_messages: str) -> str:
@@ -145,7 +148,6 @@ def get_feedback(messages_file_path: str, thread_id: str, agent_id: str, step_id
         feedback = anthropic_generate_feedback(feedback_prompts, formatted_messages)
     else:
         raise ValueError(f"Unknown feedback AI provider: {FEEDBACK_AI_PROVIDER}")
-    print(feedback)
     feedback_storage_handler.put_feedback(thread_id, agent_id, step_id, feedback)
     feedback_dict = {
         "thread_id": thread_id,
