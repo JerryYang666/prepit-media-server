@@ -38,7 +38,8 @@ FEEDBACK_USER_PROMPT_TEMPLATE = """
 # Here is the case background: {case_background}
 # You are writing feedback for this part of the interview: {feedback_step_name}
 # This step was conducted based on the following instructions: {feedback_step_instructions}
-# And this is the information (might also include best responses) that the was provided to the interviewer by the case book: {feedback_step_info}
+# This is the information (might also include best responses) that the was provided to the interviewer by the case book: {feedback_step_info}
+{feedback_step_answer}
 # Here is the interview transcript between the interviewer and the candidate:
 {feedback_step_transcript}
 # Please write feedback for the candidate based on the information above. You should directly start the feedback and should not include any extra sentence at the start or the end of your response.
@@ -78,6 +79,10 @@ def gather_feedback_prompts(agent_id: str, step_id: int) -> dict:
     feedback_step_name = current_step_prompt['title']
     feedback_step_instructions = current_step_prompt['instruction']
     feedback_step_info = current_step_prompt['information']
+    feedback_step_answer = current_step_prompt['answer'] if 'answer' in current_step_prompt and current_step_prompt[
+        'answer'] else ""
+    if feedback_step_answer.strip():
+        feedback_step_answer = f"# And here is the recommended answer, and other comment for you as a feedback provider: {feedback_step_answer}"
     case_background_step = agent_prompt_handler.get_agent_prompt(agent_id, "0")
     case_background_step = json.loads(case_background_step)
     case_background = case_background_step['information']
@@ -85,7 +90,8 @@ def gather_feedback_prompts(agent_id: str, step_id: int) -> dict:
         "case_background": case_background,
         "feedback_step_name": feedback_step_name,
         "feedback_step_instructions": feedback_step_instructions,
-        "feedback_step_info": feedback_step_info
+        "feedback_step_info": feedback_step_info,
+        "feedback_step_answer": feedback_step_answer
     }
 
 
