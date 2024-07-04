@@ -63,7 +63,6 @@ def parse_messages_file(messages_file_path: str) -> str:
     for _, value in messages.items():
         role = "Interviewer: " if value['role'] == 'assistant' else 'Candidate: '
         result += f"{role}{value['content']}\n"
-    print("msg_parse: ", result)
     return result
 
 
@@ -82,7 +81,7 @@ def gather_feedback_prompts(agent_id: str, step_id: int) -> dict:
     feedback_step_answer = current_step_prompt['answer'] if 'answer' in current_step_prompt and current_step_prompt[
         'answer'] else ""
     if feedback_step_answer.strip():
-        feedback_step_answer = f"# And here is the recommended answer, and other comment for you as a feedback provider: {feedback_step_answer}"
+        feedback_step_answer = f"# And here is the recommended answer, and other comment for you as a feedback provider. You MUST follow instructions here, if there's any, as a feedback provider: {feedback_step_answer}"
     case_background_step = agent_prompt_handler.get_agent_prompt(agent_id, "0")
     case_background_step = json.loads(case_background_step)
     case_background = case_background_step['information']
@@ -133,8 +132,8 @@ def anthropic_generate_feedback(template_contents: dict, formatted_messages: str
         messages=anthropic_messages,
         max_tokens=1024
     )
-    print(anthropic_messages)
-    print(completion.content[0].text)
+    print("anthropic messages: ", anthropic_messages)
+    print("anthropic feedback: ", completion.content[0].text)
     return str(completion.content[0].text)
 
 
@@ -161,6 +160,7 @@ def get_feedback(messages_file_path: str, thread_id: str, agent_id: str, step_id
         "agent_id": agent_id,
         "step_id": step_id,
         "step_title": feedback_prompts['feedback_step_name'],
+        "feedback_provider": FEEDBACK_AI_PROVIDER,
         "feedback": feedback
     }
     # Save the feedback to the processed media directory
