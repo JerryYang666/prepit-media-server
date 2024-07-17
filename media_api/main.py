@@ -72,9 +72,19 @@ async def send_feedback_to_queue(messages_filename, thread_id, agent_id, step_id
 async def generate_dynamic_auth_code():
     step = 30  # dynamic auth token 30 seconds window
     salt = "prepit_jerry_salt"  # Salt for the dynamic auth token
-    time_step = int(time.time() // step)
-    time_based_key = str(time_step) + salt  # Combine time step with salt
-    return hashlib.sha256(time_based_key.encode()).hexdigest()
+    current_time_step = int(time.time() // step)
+    # Calculate time steps for previous, current, and next
+    time_steps = {
+        'previous': current_time_step - 1,
+        'current': current_time_step,
+        'next': current_time_step + 1
+    }
+    # Generate hash codes for each time step
+    auth_codes = [
+        hashlib.sha256((str(time_step) + salt).encode()).hexdigest()
+        for time_step in time_steps.values()
+    ]
+    return auth_codes
 
 
 @app.post("/new_audio_processing_task")
@@ -86,8 +96,8 @@ async def audio_processing_task(
         dynamic_auth_token: str = Form(...)
 ):
     # Validate the dynamic auth token
-    expected_dynamic_auth_token = await generate_dynamic_auth_code()
-    if dynamic_auth_token != expected_dynamic_auth_token:
+    expected_dynamic_auth_tokens = await generate_dynamic_auth_code()
+    if dynamic_auth_token not in expected_dynamic_auth_tokens:
         return HTTPException(status_code=401, detail="Access Denied")
     try:
         # Save metadata file
@@ -121,8 +131,8 @@ async def feedback_processing_task(
         dynamic_auth_token: str = Form(...)
 ):
     # Validate the dynamic auth token
-    expected_dynamic_auth_token = await generate_dynamic_auth_code()
-    if dynamic_auth_token != expected_dynamic_auth_token:
+    expected_dynamic_auth_tokens = await generate_dynamic_auth_code()
+    if dynamic_auth_token not in expected_dynamic_auth_tokens:
         return HTTPException(status_code=401, detail="Access Denied")
     try:
         # Save metadata file
