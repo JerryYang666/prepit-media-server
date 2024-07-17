@@ -59,9 +59,14 @@ def organize_transcriptions_by_message(absolute_timestamps, user_msg_timestamps)
 
     last_msg_id = sorted_msgs[-1][1]
     last_timestamp = int(sorted_msgs[-1][0])
-    result.append({"msg_id": last_msg_id,
-                   "transcriptions": [entry for entry in absolute_timestamps if entry['timestamp'] >= last_timestamp]})
-
+    # if last msg id is the same as the last msg in the result, update the last entry's transcriptions
+    remaining_transcriptions = [entry for entry in absolute_timestamps if entry['timestamp'] >= last_timestamp]
+    if remaining_transcriptions:
+        if result and result[-1]['msg_id'] == last_msg_id:
+            result[-1]['transcriptions'].extend(remaining_transcriptions)
+        else:
+            result.append({"msg_id": last_msg_id,
+                           "transcriptions": remaining_transcriptions})
     return result
 
 
