@@ -156,6 +156,11 @@ def process_recording_metadata(metadata_file_path) -> dict | bool:
             f"No user messages found in metadata, skipping processing, thread_id: {thread_id}, ws_conn_sid: {ws_conn_sid}")
         return False
 
+    if not audio_timestamps:
+        print(
+            f"No audio transcription timestamps found in metadata, skipping processing, thread_id: {thread_id}, ws_conn_sid: {ws_conn_sid}")
+        return False
+
     cleaned_timestamps = clean_audio_timestamps(audio_timestamps)
     absolute_timestamps = map_to_absolute_timestamps(cleaned_timestamps, audio_started_at, audio_pause_timestamps)
     organized_transcriptions = organize_transcriptions_by_message(absolute_timestamps, user_msg_timestamps)

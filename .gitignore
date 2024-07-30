@@ -39,3 +39,4 @@ dist/
 /prepit_api_volume_local/
 /volume_cache/
 /rabbitmq_data/
+/processed_media/
