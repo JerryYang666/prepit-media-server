@@ -127,7 +127,7 @@ def anthropic_generate_feedback(template_contents: dict, formatted_messages: str
         {"role": "user", "content": FEEDBACK_USER_PROMPT_TEMPLATE.format(**template_contents)}
     ]
     completion = anthropic_client.messages.create(
-        model="claude-3-5-sonnet-20240620",
+        model="claude-3-5-sonnet-latest",
         system=FEEDBACK_SYSTEM_PROMPT_TEMPLATE,
         messages=anthropic_messages,
         max_tokens=1024
