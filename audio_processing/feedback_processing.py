@@ -44,7 +44,7 @@ FEEDBACK_USER_PROMPT_TEMPLATE = """
 {feedback_step_transcript}
 # Please write feedback for the candidate based on the information above. You should directly start the feedback and should not include any extra sentence at the start or the end of your response.
 """
-FEEDBACK_AI_PROVIDER = "anthropic"  # "openai" or "anthropic"
+FEEDBACK_AI_PROVIDER = "openai"  # "openai" or "anthropic"
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 anthropic_client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 agent_prompt_handler = AgentPromptHandler()
